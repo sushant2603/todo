@@ -1,4 +1,4 @@
 todo
 ====
 
-My first android app, A Todo list.
+My todo app is complete.
