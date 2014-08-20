@@ -5,4 +5,4 @@ My todo app is complete. This app creates a simple Todo list and allows for modi
 
 Time spent: 4hrs (including installation)
 
-![Video Walkthrough](TodoDemo.ogv)
+![Video Walkthrough](todo.gif)
