@@ -1,10 +1,14 @@
 package com.example.todoapp;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
+
+import com.example.todoapp.AddDialog.AddDialogListener;
+import com.example.todoapp.EditDialog.EditDialogListener;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,22 +21,33 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.commons.io.*;
 
-
-public class TodoActivity extends Activity {
+public class TodoActivity extends Activity
+	implements EditDialogListener, AddDialogListener {
 	
 	private final int REQUEST_CODE = 20;
-	private ArrayList<String> items;
-	private ArrayAdapter<String> itemsAdapter;
+	private List<Item> items;
+	private ArrayAdapter<Item> itemsAdapter;
 	private ListView lvItems;
 	private EditText etNewItem;
+	private ItemsDataSource datasource;
 
     public void onAddedItem(View v) {
-    	String itemText = etNewItem.getText().toString();
-    	itemsAdapter.add(itemText);
-    	etNewItem.setText("");
-    	writeItems();
+    	/*String itemText = etNewItem.getText().toString();
+    	Item item = datasource.createItem(itemText);
+    	items.add(item);
+    	itemsAdapter.notifyDataSetChanged();
+    	etNewItem.setText("");*/
+	    FragmentTransaction ft = getFragmentManager().beginTransaction();
+	    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+	    if (prev != null) {
+	        ft.remove(prev);
+	    }
+	    ft.addToBackStack(null);
+
+	    // Create and show the dialog.
+	    DialogFragment newFragment = AddDialog.newInstance();
+	    newFragment.show(ft, "dialog");
     }
 
     @Override
@@ -58,11 +73,13 @@ public class TodoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
-        etNewItem = (EditText) findViewById(R.id.etNewItem);
+        datasource = new ItemsDataSource(this);
+        datasource.open();
+
+        //etNewItem = (EditText) findViewById(R.id.etNewItem);
         lvItems = (ListView) findViewById(R.id.lvItems);
-        items = new ArrayList<String>();
-        readItems();
-        itemsAdapter = new ArrayAdapter<String>(this,
+        items = datasource.getAllItems();
+        itemsAdapter = new ArrayAdapter<Item>(this,
         		android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
         setupDeleteListener();
@@ -74,9 +91,11 @@ public class TodoActivity extends Activity {
     	if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
     		String newItemText = data.getExtras().getString("newItem");
     		int itemPosition = data.getExtras().getInt("position");
-    		items.set(itemPosition, newItemText);
+    		Item newItem = items.get(itemPosition);
+    		newItem.setDescription(newItemText);
+    		datasource.updateItem(newItem);
+    		items.set(itemPosition, newItem);
     		itemsAdapter.notifyDataSetChanged();
-    		writeItems();
     	}
     }
 
@@ -85,9 +104,10 @@ public class TodoActivity extends Activity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> adapter, View item,
 					int position, long id) {
+				Item deleteItem = items.get(position);
+				datasource.deleteItem(deleteItem);
 				items.remove(position);
 				itemsAdapter.notifyDataSetChanged();
-				writeItems();
 				return true;
 			}
     	});
@@ -98,31 +118,39 @@ public class TodoActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long id) {
-				Intent editIntent = new Intent(TodoActivity.this, EditItemActivity.class);
+				/*Intent editIntent = new Intent(TodoActivity.this, EditItemActivity.class);
 				editIntent.putExtra("position", position);
-				editIntent.putExtra("itemText", items.get(position));
-				startActivityForResult(editIntent, REQUEST_CODE);
+				editIntent.putExtra("itemText", items.get(position).getDescription());
+				startActivityForResult(editIntent, REQUEST_CODE);*/
+			    FragmentTransaction ft = getFragmentManager().beginTransaction();
+			    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+			    if (prev != null) {
+			        ft.remove(prev);
+			    }
+			    ft.addToBackStack(null);
+
+			    // Create and show the dialog.
+			    DialogFragment newFragment = EditDialog.newInstance(
+			    		items.get(position), position);
+			    newFragment.show(ft, "dialog");
 			}
 		});
     }
 
-    private void readItems() {
-    	File fileDir = getFilesDir();
-    	File itemsFile = new File(fileDir, "items.txt");
-    	try {
-    		items = new ArrayList<String>(FileUtils.readLines(itemsFile));
-    	} catch (IOException e) {
-    		items = new ArrayList<String>();
-    	}
-    }
+	@Override
+	public void onEditDialogDone(String text, int position) {
+ 		Item newItem = items.get(position);
+		newItem.setDescription(text);
+		datasource.updateItem(newItem);
+		items.set(position, newItem);
+		itemsAdapter.notifyDataSetChanged();
+	}
 
-    private void writeItems() {
-    	File fileDir = getFilesDir();
-    	File itemsFile = new File(fileDir, "items.txt");
-    	try {
-    		FileUtils.writeLines(itemsFile, items);
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    }
+	@Override
+	public void onAddDialogDone(String text, String priority) {
+    	Item item = datasource.createItem(text);
+    	items.add(item);
+    	itemsAdapter.notifyDataSetChanged();
+    	etNewItem.setText("");
+	}
 }

@@ -10,5 +10,9 @@
     <string name="editItemTitle">Edit Item Below:</string>
     <string name="btnSave">Save</string>
     <string name="editItemHint">Edit Item</string>
+    <string name="edit">Edit</string>
+    <string name="addDescription">Description:</string>
+    <string name="addPriority">Priority</string>
+    <string name="priorityHint">Enter Priority</string>
 
 </resources>
