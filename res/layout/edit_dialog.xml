@@ -8,21 +8,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.todoapp.EditItemActivity" >
 
-   <CheckedTextView
-        android:id="@+id/checkedTextView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/editItemTitle" />
-    
     <Button
         android:id="@+id/editbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editTextFragment"
-        android:layout_below="@+id/editTextFragment"
-        android:layout_marginTop="38dp"
+        android:layout_alignLeft="@+id/editDatePicker"
+        android:layout_alignParentBottom="true"
         android:onClick="onSave"
         android:text="@string/btnSave" />
 
@@ -30,10 +21,21 @@
         android:id="@+id/editTextFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/checkedTextView1"
-        android:layout_below="@+id/checkedTextView1"
-        android:layout_marginTop="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="33dp"
         android:ems="10"
         android:hint="@string/editItemHint" />
+
+    <DatePicker
+        android:id="@+id/editDatePicker"
+        android:layout_width="301dp"
+        android:layout_height="218dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:calendarViewShown="false"
+        android:endYear="2017"
+        android:startYear="2014" />
                 
 </RelativeLayout>

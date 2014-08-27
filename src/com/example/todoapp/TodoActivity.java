@@ -1,5 +1,6 @@
 package com.example.todoapp;
 
+import java.util.Calendar;
 import java.util.List;
 
 import com.example.todoapp.AddDialog.AddDialogListener;
@@ -18,9 +19,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-
 
 public class TodoActivity extends Activity
 	implements EditDialogListener, AddDialogListener {
@@ -29,15 +28,9 @@ public class TodoActivity extends Activity
 	private List<Item> items;
 	private ArrayAdapter<Item> itemsAdapter;
 	private ListView lvItems;
-	private EditText etNewItem;
 	private ItemsDataSource datasource;
 
     public void onAddedItem(View v) {
-    	/*String itemText = etNewItem.getText().toString();
-    	Item item = datasource.createItem(itemText);
-    	items.add(item);
-    	itemsAdapter.notifyDataSetChanged();
-    	etNewItem.setText("");*/
 	    FragmentTransaction ft = getFragmentManager().beginTransaction();
 	    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 	    if (prev != null) {
@@ -76,7 +69,6 @@ public class TodoActivity extends Activity
         datasource = new ItemsDataSource(this);
         datasource.open();
 
-        //etNewItem = (EditText) findViewById(R.id.etNewItem);
         lvItems = (ListView) findViewById(R.id.lvItems);
         items = datasource.getAllItems();
         itemsAdapter = new ArrayAdapter<Item>(this,
@@ -118,17 +110,12 @@ public class TodoActivity extends Activity
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long id) {
-				/*Intent editIntent = new Intent(TodoActivity.this, EditItemActivity.class);
-				editIntent.putExtra("position", position);
-				editIntent.putExtra("itemText", items.get(position).getDescription());
-				startActivityForResult(editIntent, REQUEST_CODE);*/
 			    FragmentTransaction ft = getFragmentManager().beginTransaction();
 			    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 			    if (prev != null) {
 			        ft.remove(prev);
 			    }
 			    ft.addToBackStack(null);
-
 			    // Create and show the dialog.
 			    DialogFragment newFragment = EditDialog.newInstance(
 			    		items.get(position), position);
@@ -138,19 +125,19 @@ public class TodoActivity extends Activity
     }
 
 	@Override
-	public void onEditDialogDone(String text, int position) {
+	public void onEditDialogDone(String text, Calendar date, int position) {
  		Item newItem = items.get(position);
 		newItem.setDescription(text);
+		newItem.setDate(date.getTimeInMillis());
 		datasource.updateItem(newItem);
 		items.set(position, newItem);
 		itemsAdapter.notifyDataSetChanged();
 	}
 
 	@Override
-	public void onAddDialogDone(String text, String priority) {
-    	Item item = datasource.createItem(text);
+	public void onAddDialogDone(String text, Calendar date) {
+    	Item item = datasource.createItem(text, date);
     	items.add(item);
     	itemsAdapter.notifyDataSetChanged();
-    	etNewItem.setText("");
 	}
 }

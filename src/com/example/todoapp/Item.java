@@ -1,10 +1,13 @@
 package com.example.todoapp;
 
+import java.util.Calendar;
+
 public class Item {
 	
 	private long id;
 	private String description;
 	private String priority;
+	private long date;
 
 	public long getId() {
 		return id;
@@ -12,6 +15,14 @@ public class Item {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getDate() {
+		return date;
+	}
+
+	public void setDate(long date) {
+		this.date = date;
 	}
 
 	public String getPriority() {
@@ -32,6 +43,8 @@ public class Item {
 	
 	@Override
 	public String toString() {
-		return description;
+		Calendar date = Calendar.getInstance();
+		date.setTimeInMillis(this.date);
+		return description + "\n" + date.toString();
 	}
 }

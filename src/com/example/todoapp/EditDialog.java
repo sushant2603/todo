@@ -1,4 +1,6 @@
 package com.example.todoapp;
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 
@@ -15,10 +18,11 @@ public class EditDialog extends DialogFragment {
 	private EditText textField;
 	private Button saveButton;
 	private static int itemPosition;
+	private DatePicker datePicker;
 	private static Item editItem;
 
 	public interface EditDialogListener {
-		void onEditDialogDone(String text, int position);
+		void onEditDialogDone(String text, Calendar date, int position);
 	}
 	
 	public EditDialogListener listener;
@@ -34,7 +38,7 @@ public class EditDialog extends DialogFragment {
         dialog.setArguments(args);
         return dialog;
     }
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -43,6 +47,8 @@ public class EditDialog extends DialogFragment {
         textField.setText(editItem.getDescription());
         textField.setSelection(editItem.getDescription().length());
 
+        datePicker = (DatePicker) view.findViewById(R.id.editDatePicker);
+
         // Watch for button clicks.
         saveButton = (Button)view.findViewById(R.id.editbtn);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +56,10 @@ public class EditDialog extends DialogFragment {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
         		String text = textField.getText().toString();
-        		listener.onEditDialogDone(text, itemPosition);
+				Calendar newDate = Calendar.getInstance();
+				newDate.set(datePicker.getYear(),
+					datePicker.getMonth(), datePicker.getDayOfMonth());
+        		listener.onEditDialogDone(text, newDate, itemPosition);
         		getDialog().dismiss();
             }
         });
