@@ -29,9 +29,7 @@ public class AddDialog extends DialogFragment {
 	public AddDialogListener listener;
 
     static AddDialog newInstance() {
-
         AddDialog dialog = new AddDialog();
-        // Supply num input as an argument.
         Bundle args = new Bundle();
         dialog.setArguments(args);
         return dialog;

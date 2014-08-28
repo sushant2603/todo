@@ -32,7 +32,6 @@ public class EditDialog extends DialogFragment {
     	itemPosition = position;
     	editItem = item;
         EditDialog dialog = new EditDialog();
-        // Supply num input as an argument.
         Bundle args = new Bundle();
         args.putString("description", item.getDescription());
         dialog.setArguments(args);

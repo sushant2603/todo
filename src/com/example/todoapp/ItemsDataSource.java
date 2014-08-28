@@ -15,7 +15,7 @@ public class ItemsDataSource {
 	private SQLiteDatabase db;
 	private DBHelper dbHelper;
 	private String[] allColumns = { DBHelper.ID_COLUMN,
-		DBHelper.DESCRIPTION_COLUMN };
+		DBHelper.DESCRIPTION_COLUMN, DBHelper.DATE_COLUMN };
 
 	public ItemsDataSource(Context context) {
 		dbHelper = new DBHelper(context);
@@ -23,7 +23,6 @@ public class ItemsDataSource {
 
 	public void open() throws SQLException {
 		db = dbHelper.getWritableDatabase();
-		dbHelper.onUpgrade(db, 1, 2);
 	}
 
 	public void close() {
@@ -75,6 +74,7 @@ public class ItemsDataSource {
 		Item item = new Item();
 		item.setId(cursor.getLong(0));
 		item.setDescription(cursor.getString(1));
+		item.setDate(cursor.getLong(2));
 		return item;
 	}
 }

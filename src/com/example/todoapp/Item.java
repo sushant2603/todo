@@ -45,6 +45,6 @@ public class Item {
 	public String toString() {
 		Calendar date = Calendar.getInstance();
 		date.setTimeInMillis(this.date);
-		return description + "\n" + date.toString();
+		return description + "\n" + date.getTime().toString();
 	}
 }
