@@ -5,4 +5,14 @@ My todo app is complete. This app creates a simple Todo list and allows for modi
 
 Time spent: 4hrs (including installation)
 
-![Video Walkthrough](todo.gif)
+Second Submissions:
+
+1) The app now allows storing a due date for each todo item.
+2) The items are persisted in a SQLite database.
+
+Next steps:
+1) The UI is clunky, work on showing date as subtext.
+2) Add priority for each todo item and reflect it in UI
+3) Possibly set alerts as due date gets closer.
+
+![Video Walkthrough](todo1.gif)
